@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="feedMapper">
+	<!-- 리스트 -->
+	<select id="listCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM FEED
+		WHERE STATUS ='Y'
+	</select>
+	
+	<resultMap type="Feed" id="feedResultSet">
+			<id property="feedNo" column="FEED_NO"/>
+			<result column="FEED_CONTENT" property="feedContent"/>
+			<result column="FEED_WRITER" property="feedWriter"/>
+			<result column="CREATE_DATE" property="createDate"/>
+			<result column="FEED_LOCATION" property="feedLocation"/>
+			<result column="CHANGE_NAME" property="changeName"/>
+		</resultMap>
+		
+	<insert id="insertFeed" parameterType="Feed">
+	    INSERT INTO FEED(FEED_NO
+	    				,FEED_CONTENT
+	    				,FEED_WRITER
+	    				,FEED_LOCATION)
+		    VALUES(SEQ_FNO.NEXTVAL
+		    	   ,#{feedContent}
+		    	   ,#{feedWriter}
+		    	   ,#{feedLocation})
+	</insert>
+	
+	<select id="selectFeedNo" resultType="_int">
+	SELECT SEQ_FNO.CURRVAL FROM DUAL
+	</select>     
+	
+	<select id="selectList" resultMap="feedResultSet" parameterType="string">
+	SELECT FEED_NO,
+           FEED_CONTENT,
+           FEED_WRITER,
+           CREATE_DATE,
+           FEED_LOCATION
+    FROM FEED
+    WHERE FEED_WRITER = #{userId}
+       OR FEED_WRITER IN (
+           SELECT TO_USER
+           FROM FOLLOWLIST
+           WHERE FROM_USER = #{userId}
+       )
+    ORDER BY CREATE_DATE DESC
+	</select>     
+	
+	<select id="replyList" resultType="Reply" parameterType="_int">
+	SELECT  REPLY_NO replyNo
+		   ,RE_CONTENT reContent
+		   ,USER_ID userId
+		   ,CREATE_DATE createDate
+		FROM REPLY
+		WHERE FEED_NO = #{feedNo} 
+		AND STATUS = 'Y'
+		ORDER BY CREATE_DATE DESC
+	</select>
+	
+	<insert id="insertReply" parameterType="Reply">
+		INSERT INTO REPLY(REPLY_NO
+	                     ,RE_CONTENT
+	                     ,FEED_NO
+	                     ,USER_ID)
+	           VALUES(SEQ_RNO.NEXTVAL
+	           		  ,#{reContent}
+	           		  ,#{feedNo}
+	           		  ,#{userId})
+	</insert>
+	
+	<select id="selectFeed" resultMap="feedResultSet" parameterType="_int">
+		SELECT FEED_NO
+			  ,FEED_CONTENT
+			  ,FEED_WRITER
+			  ,CREATE_DATE
+			  ,FEED_LOCATION
+		FROM FEED
+		WHERE FEED_NO = #{feedNo}
+		AND STATUS = 'Y'
+	</select>
+	
+	 <!-- 좋아요 추가 -->
+    <insert id="insertLike" parameterType="FeedLike">
+        INSERT INTO FEED_LIKE (FEED_LIKE,USER_ID, FEED_NO)
+        VALUES (SEQ_LNO.NEXTVAL,#{userId}, #{feedNo})
+    </insert>
+
+    <!-- 좋아요 취소 -->
+    <delete id="deleteLike" parameterType="FeedLike">
+        DELETE FROM FEED_LIKE
+        WHERE USER_ID = #{userId}
+        AND FEED_NO = #{feedNo}
+    </delete>
+
+    <!-- 좋아요 수 증가 -->
+    <update id="addCount" parameterType="_int">
+        UPDATE FEED
+        SET LIKE_COUNT = LIKE_COUNT + 1
+        WHERE FEED_NO = #{feedNo}
+    </update>
+
+    <!-- 좋아요 수 감소 -->
+    <update id="removeCount" parameterType="_int">
+        UPDATE FEED
+        SET LIKE_COUNT = LIKE_COUNT - 1
+        WHERE FEED_NO = #{feedNo}
+    </update>
+
+    <!-- 좋아요 여부 확인 -->
+    <select id="likeCheck" parameterType="map" resultType="_int">
+        SELECT COUNT(*)
+        FROM FEED_LIKE
+        WHERE FEED_NO = #{feedNo}
+        AND USER_ID = #{userId}
+    </select>
+
+    <!-- 좋아요 수 조회 -->
+    <select id="likeCount" parameterType="_int" resultType="_int">
+        SELECT LIKE_COUNT
+        FROM FEED
+        WHERE FEED_NO = #{feedNo}
+    </select>
+		
+	<select id="searchTag" parameterType="Tag" resultType="Tag">
+		SELECT TAG_CONTENT tagContent, MIN(REF_FNO) refFno FROM TAG WHERE TAG_CONTENT LIKE '%'||#{tagContent}||'%' GROUP BY TAG_CONTENT
+	</select>
+
+	<select id="selectTag" parameterType="Tag" resultMap="feedResultSet">
+		SELECT 
+		    F.FEED_NO,
+		    F.FEED_CONTENT,
+		    F.FEED_WRITER,
+		    F.CREATE_DATE,
+		    MIN(FI.CHANGE_NAME) AS CHANGE_NAME,  
+		    F.FEED_LOCATION
+		FROM 
+		    FEED F
+		JOIN 
+		    FEED_IMG FI ON F.FEED_NO = FI.FEED_NO
+		WHERE 
+		    F.STATUS = 'Y'
+		    AND F.FEED_NO IN (
+		        SELECT REF_FNO
+		        FROM TAG
+		        WHERE TAG_CONTENT = #{tagContent}
+		    )
+		GROUP BY 
+		    F.FEED_NO,
+		    F.FEED_CONTENT,
+		    F.FEED_WRITER,
+		    F.CREATE_DATE,
+		    F.FEED_LOCATION
+		ORDER BY 
+		    F.CREATE_DATE DESC
+	</select>
+	
+	<!-- 게시글 삭제 -->
+	<update id="deleteFeed" parameterType="_int">
+		UPDATE FEED
+		SET STATUS = 'N'
+		WHERE FEED_NO =#{feedNo}
+		AND STATUS = 'Y'
+	</update>
+	
+	<!-- insert 태그 추가 -->
+	<insert id="insertTag" parameterType="Tag">
+    INSERT INTO TAG(TAG_CONTENT, REF_FNO)
+    VALUES(#{tagContent}, #{refFno})
+	</insert>
+	
+	<!-- 태그 리스트 뽑기 -->
+	<select id="getTagsByFeedNo" parameterType="_int" resultType="string">
+	 SELECT TAG_CONTENT
+     FROM TAG
+     WHERE REF_FNO = #{feedNo}
+	</select>
+	
+	<insert id="insertReplyLike" parameterType="ReplyLike">
+		INSERT INTO REPLY_LIKE(USER_ID,REPLY_NO)
+		VALUES (#{userId},#{replyNo})
+	</insert>
+	
+	<delete id="deleteReplyLike" parameterType="ReplyLike">
+		DELETE FROM REPLY_LIKE
+		WHERE USER_ID = #{userId}
+		AND REPLY_NO = #{replyNo}
+	</delete>
+	
+	<select id="checkReplyLike" parameterType="ReplyLike" resultType="_int">
+		SELECT COUNT(*)
+        FROM REPLY_LIKE
+        WHERE REPLY_NO = #{replyNo}
+        AND USER_ID = #{userId}
+	</select>
+	
+	<select id="countReplyLikes" parameterType="_int" resultType="_int">
+        SELECT COUNT(*)
+        FROM REPLY_LIKE
+        WHERE REPLY_NO = #{replyNo}
+    </select>
+    
+    <select id="getUserProfile" parameterType="String" resultType="User">
+    	SELECT USER_ID userId, PROFILE_PATH profilePath, PROFILE_ORIGINNAME profileOriginName, PROFILE_CHANGENAME profileChangeName
+   		FROM USERS
+    	WHERE USER_ID = #{feedWriter}
+    </select>
+    
+    <select id="getFollowList" parameterType="String" resultType="FollowList">
+   	 	SELECT TO_USER toUser, FROM_USER fromUser
+  		FROM FOLLOWLIST
+  		WHERE FROM_USER = #{userId}
+    </select>
+    
+    <select id="isFollowing" parameterType="map" resultType="_int">
+    	SELECT COUNT(*)
+    	FROM FOLLOWLIST
+    	WHERE FROM_USER = #{userId}
+    	AND TO_USER = #{toUser}
+    </select>
+    
+   	<insert id="saveFeed" parameterType="feedKeep">
+   		INSERT INTO FEED_KEEP (FEED_NO,USER_ID)
+   		VALUES (#{feedNo},#{userId})
+   	</insert>
+   	
+   	<delete id="unsaveFeed" parameterType="feedKeep">
+   		DELETE FROM FEED_KEEP
+   		WHERE FEED_NO = #{feedNo}
+   		AND USER_ID = #{userId}
+   	</delete>
+   	
+   	<select id="checkFeedSave" parameterType="map" resultType="_int">
+   		SELECT COUNT(*)
+   		FROM FEED_KEEP
+   		WHERE FEED_NO =#{feedNo}
+   		AND USER_ID = #{userId}
+   	</select>
+   	
+   <select id="getRecommend" parameterType="map" resultType="User">
+ <![CDATA[
+	    SELECT USER_ID userId, PROFILE_CHANGENAME profileChangename, PROFILE_PATH profilePath, JOINDATE joinDate
+	    FROM (
+	        SELECT USER_ID, PROFILE_CHANGENAME,PROFILE_PATH,JOINDATE
+	        FROM USERS
+	        WHERE USER_ID NOT IN (
+	            SELECT TO_USER 
+	            FROM FOLLOWLIST 
+	            WHERE FROM_USER = #{userId}
+	        )
+	        ORDER BY dbms_random.value
+	    )
+	    WHERE ROWNUM <= #{limit}
+    ]]>
+   </select>
+   
+   <insert id="followUser" parameterType="FollowList">
+   		INSERT INTO FOLLOWLIST (FROM_USER,TO_USER)
+   		VALUES (#{fromUser}, #{toUser})
+   </insert>
+   
+     <select id="getRecommendList" parameterType="map" resultType="User">
+ <![CDATA[
+	    SELECT USER_ID userId, PROFILE_CHANGENAME profileChangename, PROFILE_PATH profilePath,JOINDATE joinDate
+	    FROM (
+	        SELECT USER_ID, PROFILE_CHANGENAME,PROFILE_PATH,JOINDATE
+	        FROM USERS
+	        WHERE USER_ID NOT IN (
+	            SELECT TO_USER 
+	            FROM FOLLOWLIST 
+	            WHERE FROM_USER = #{userId}
+	        )
+	        ORDER BY dbms_random.value
+	    )
+	    WHERE ROWNUM <= #{limit}
+    ]]>
+   </select>
+   
+   <!-- 사진 여러장 추가 -->
+   <insert id="insertFeedImg" parameterType="FeedImg">
+    INSERT INTO FEED_IMG (IMG_ID, FEED_NO, ORIGIN_NAME, CHANGE_NAME)
+    VALUES (SEQ_INO.NEXTVAL, #{feedNo}, #{originName}, #{changeName})
+   </insert>
+   
+   <!-- 게시글 사진 조회 -->
+   <select id="selectImages" parameterType="_int" resultType="FeedImg">
+   SELECT IMG_ID imgId, FEED_NO feedNo, ORIGIN_NAME originName, CHANGE_NAME changeName
+   FROM FEED_IMG
+   WHERE FEED_NO = #{feedNo}
+   </select>
+   
+	
+	
+	
+	
+
+</mapper>

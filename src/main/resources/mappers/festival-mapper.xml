@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="festivalMapper">
+	<insert id="insertRecommend" parameterType="Recommend">
+		INSERT INTO RECOMMEND(USER_ID,FESTIVAL_NAME)VALUES(#{userId},#{festivalName})
+	</insert>
+
+	<select id="selectRecommendList" resultType="Recommend">
+		SELECT FESTIVAL_NAME festivalName, COUNT(*) recommendCount
+		FROM RECOMMEND
+		GROUP BY FESTIVAL_NAME
+	</select>
+	
+	<select id="selectRecommendUserList" resultType="Recommend" parameterType="Recommend">
+		SELECT FESTIVAL_NAME festivalName, USER_ID userId
+		FROM RECOMMEND
+	</select>
+	
+	<delete id="deleteRecommend" parameterType="Recommend">
+		DELETE FROM RECOMMEND WHERE USER_ID=#{userId} AND FESTIVAL_NAME=#{festivalName}
+	</delete>
+
+</mapper>

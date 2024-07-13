@@ -1,0 +1,193 @@
+@charset "UTF-8";
+	.outer {
+	    display: flex;
+	    height: 100vh;
+	}
+	.table-container {
+	    flex: 1;
+	    position: relative;
+	    border: 1px solid #ccc;
+	    border-radius: 5px;
+	    padding: 10px;
+	    background-color: #fff;
+	    margin-left: 10px;
+	    max-height: 100%;
+	    overflow-y: auto;
+	    width: calc((100% - 250px) * 0.15);
+	}
+
+	.chat-container {
+    flex: 1 1 auto; /* flex-grow, flex-shrink, flex-basis 설정 */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    position: relative;
+    max-height: 100%; /* 부모 요소의 높이에 맞게 최대 높이 설정 */
+    width: calc((100% - 250px) * 0.85);
+}
+	
+	.chat-area {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+    position: relative;
+    max-height: 100%; /* 부모 요소의 높이에 맞게 최대 높이 설정 */
+}
+	
+	#msg {
+	    width: 40px;
+	    height: 40px;
+	    position: absolute;
+	    top: 10px;
+	    right: 10px;
+	}
+	
+	.sel {
+	    width: 100%;
+	    overflow-y: auto;
+	}
+	
+	.sel thead {
+	    font-weight: bold;
+	    text-align: center;
+	    border: none;
+	}
+	
+	.sel tbody td:first-child {
+	    width: 10%;
+	}
+	
+	.sel th,
+	.sel td {
+	    padding: 10px;
+	}
+	
+	#chat {
+	    height: 50px;
+	    width: 95%;
+	    padding: 10px;
+	    border: 1px solid #ccc;
+	    border-radius: 5px;
+	    margin-top: 10px;
+	    font-size: 20px;
+	}
+	
+	#selfie {
+	    width: 60px;
+	    height: 60px;
+	}
+	#selfie {
+	    width: 60px;
+	    height: 60px;
+	}
+	
+	#userProfile {
+	    width: 60px;
+	    height: 60px;
+	}
+	
+	.chat-input {
+	    margin-top: 10px;
+	    display: flex;
+	}
+	
+	.chat-input input[type="text"] {
+	    flex: 1;
+	    padding: 10px;
+	    border: 1px solid #ccc;
+	    border-radius: 5px;
+	    margin-right: 10px;
+	}
+	
+	.chat-input button {
+	    padding: 10px 20px;
+	    border: none;
+	    cursor: pointer;
+	    background-color: #007bff;
+	    color: #fff;
+	    border-radius: 5px;
+	    transition: background-color 0.3s;
+	}
+	
+	.chat-input button:hover {
+	    background-color: #0056b3;
+	}
+	
+	#exit {
+	    position: absolute;
+	    top: 10px;
+	    right: 10px;
+	    padding: 5px 10px;
+	    background-color: #f44336;
+	    color: white;
+	    border: none;
+	    cursor: pointer;
+	}
+.sent-message {
+    float: right;
+    clear: both;
+    background-color: #9999FF; /* 배경색 */
+    padding: 5px 10px; /* 내부 여백 */
+    border-radius: 10px; /* 모서리 둥글게 */
+    margin-bottom: 10px; /* 메시지 사이 여백 */
+    width: auto;
+}
+
+.received-message {
+    float: left;
+    clear: both;
+    background-color: lightgray; /* 배경색 */
+    padding: 5px 10px; /* 내부 여백 */
+    border-radius: 10px; /* 모서리 둥글게 */
+    margin-bottom: 10px; /* 메시지 사이 여백 */
+    width: auto;
+}
+
+/* 이모지 모달 적용이 안되는 중*/
+.modal {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    left: 30%;
+    bottom: 10%;
+    width: 600px;
+    height: 200px;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.emoji {
+    font-size: 24px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+#emoji:hover {
+    cursor: pointer;
+}

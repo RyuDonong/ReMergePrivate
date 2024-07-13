@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mypageMapper">
+
+	<resultMap type="User" id="userResultSet">
+		<result column="USER_ID" property="userId" />
+		<result column="USER_PWD" property="userPwd" />
+		<result column="EMAIL" property="email" />
+		<result column="JOINDATE" property="joinDate" />
+		<result column="PROFILE_PATH" property="profilePath" />
+		<result column="PROFILE_ORIGINNAME" property="profileOriginName"/>
+		<result column="PROFILE_CHANGEPATH" property="profileChangePath"/>
+		<result column="STATUS" property="status" />
+		<result column="SHOP_BRANDCHEK" property="shopBrandChek" />
+		<result column="USER_MEMO" property="userMemo" />
+		<result column="PROFILE_ORIGINNAME"	property="profileOriginName" />
+		<result column="PROFILE_CHANGENAME"	property="profileChangeName" />
+	</resultMap>
+	
+	<select id="loginUser" resultMap="userResultSet">
+		SELECT *
+		FROM USERS
+		WHERE USER_ID = #{userId}
+		AND
+		STATUS = 'Y'
+	</select>
+
+	
+
+	<update id="updateUser" parameterType="User">
+		UPDATE USERS
+		SET EMAIL=#{email}
+		,USER_MEMO =#{userMemo}
+		,PROFILE_ORIGINNAME=#{profileOriginName}
+		,PROFILE_CHANGENAME=#{profileChangeName}
+		WHERE USER_ID=#{userId}
+		AND STATUS='Y'
+	</update>
+
+	<update id="updatePwd" parameterType="User">
+		UPDATE USERS
+		SET
+		USER_PWD=#{userPwd}
+		WHERE USER_ID=#{userId}
+		AND STATUS='Y'
+	</update>
+
+
+	<update id="deleteUser" parameterType="string">
+		UPDATE USERS
+		SET STATUS =
+		'N'
+		WHERE USER_ID = #{userId}
+		AND STATUS = 'Y'
+	</update>
+
+	<update id="updateProfile" parameterType="User">
+		UPDATE USERS
+		SET PROFILE_ORIGINNAME=#{profileOriginName}
+		,PROFILE_CHANGENAME	=#{profileChangeName}
+		WHERE USER_ID = #{userId}
+		AND STATUS = 'Y'
+	</update>
+
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+ 	<settings>
+ 		<setting name="jdbcTypeForNull" value="NULL"/>
+ 	</settings>
+ 	
+ 	<typeAliases>
+
+ 		<typeAlias type="com.kh.reMerge.message.model.vo.Message" alias="Message"/>
+ 		<typeAlias type="com.kh.reMerge.calendar.model.vo.Schedule" alias="Schedule"/>
+ 		<typeAlias type="com.kh.reMerge.user.model.vo.User" alias="User"/>
+ 		<typeAlias type="com.kh.reMerge.feed.model.vo.Feed" alias="Feed"/>
+		<typeAlias type="com.kh.reMerge.feed.model.vo.Story" alias="Story"/>
+		<typeAlias type="com.kh.reMerge.user.model.vo.FollowList" alias="FollowList"/>
+		<typeAlias type="com.kh.reMerge.feed.model.vo.Reply" alias="Reply"/>
+		<typeAlias type="com.kh.reMerge.user.model.vo.SearchHistory" alias="SearchHistory"/>
+		<typeAlias type="com.kh.reMerge.feed.model.vo.History" alias="History"/>
+		<typeAlias type="com.kh.reMerge.feed.model.vo.FeedLike" alias="FeedLike"/>
+		<typeAlias type="com.kh.reMerge.feed.model.vo.Tag" alias="Tag"/>
+		<typeAlias type="com.kh.reMerge.feed.model.vo.ReplyLike" alias="ReplyLike"/>
+		<typeAlias type="com.kh.reMerge.festival.model.vo.Recommend" alias="Recommend"/>
+		<typeAlias type="com.kh.reMerge.feed.model.vo.FeedKeep" alias="FeedKeep"/>
+		<typeAlias type="com.kh.reMerge.feed.model.vo.FeedImg" alias="FeedImg"/>
+		
+ 	</typeAliases>
+ 	
+ 
+</configuration>

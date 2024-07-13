@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+		
+	<bean class="org.apache.commons.dbcp2.BasicDataSource" id="dataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+		<property name="username" value="REMERGE"/>
+		<property name="password" value="REMERGE"/>
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+		<property name="mapperLocations" value="classpath:mappers/*-mapper.xml"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean class="org.mybatis.spring.SqlSessionTemplate" id="sqlSession">
+		<constructor-arg ref="sqlSessionFactory"/>
+	</bean>
+	<!-- 파일 업로드 관련 빈 등록하기 -->
+	<!-- MultipartResolver 등록하기 -->
+	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
+		<!-- 업로드 되는 파일의 대한 인코딩 처리 -->
+		<property name="defaultEncoding" value="UTF-8"/> 
+		
+		<!-- 파일 용량은 계산식이 들어가지 않기 때문에 10 *1024 * 1024 해서 대략적으로 10MB  넣어준것   -->		
+		<property name="maxUploadSize" value="10000000"/> <!-- 업로드 파일 용량 제한 --> 
+		<property name="maxInMemorySize" value="10000000"/> <!-- 메모리 보관 최대크기 (임시보관) -->
+	</bean>
+	
+	<!-- 트랜잭션 사용 설정 
+		 @Transactional 어노테이션을 활성화 시키는 작업
+		 트랜잭션 매니저 도구 등록
+	 -->
+	<tx:annotation-driven/>
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- AOP 관련 설정
+		@Aspect와 관련된 어노테이션 활성화
+	 -->
+	 <aop:aspectj-autoproxy/>
+	 <!-- root-context에서 필요한 component들을 활성화 시키기 위해서 
+	 	  base-package 설정 및 필요한 어노테이션 별도로 등록해주기 (servlet-context)보다 빠른 시점
+	 	  root-context와 servlet-context에서 중복으로 등록되는 component들을 중복되지 않도록 지정 처리하기.
+	 	  
+	 	  @Service,@Repository,@Aspect 세가지 어노테이션은 root-context에서 스캔하겠다.
+	 	  use-default-filters : 기본 스캔 설정 (@Component,@Controller,@Service,@Repository 어노테이션들) 을 할지 여부
+	  -->
+	 <context:component-scan base-package="com.kh.reMerge" use-default-filters="false">
+	 	<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+	 	<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+	 	<context:include-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect"/>
+	 </context:component-scan>
+	 
+	 
+		
+	<!-- 스케쥴러 사용 설정 -->
+	
+	<task:annotation-driven/>	
+	
+	
+	<!-- 이메일 인증을 위한 설정 -->	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+   <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.naver.com" />
+        <property name="port" value="587" />    
+        <property name="username" value="skwjdalssk@naver.com" />
+        <property name="password" value="19DRVB8THDUX" />
+        <property name="defaultEncoding" value="utf-8" />
+        
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtps.ssl.checkserveridentity">true</prop>
+                <prop key="mail.smtps.ssl.trust">*</prop>
+                <prop key="mail.debug">true</prop>
+                <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+            </props>
+        </property>
+    </bean>
+		
+</beans>

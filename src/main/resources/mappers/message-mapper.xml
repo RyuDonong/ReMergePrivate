@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="messageMapper">
+    <resultMap type="Message" id="messageResultMap">
+        <result column="MESSAGE_NO" property="messageNo" />
+        <result column="MESSAGEROOM_NO" property="messageRoomNo" />
+        <result column="SEND_ID" property="sendId" />
+        <result column="RECEIVE_ID" property="receiveId" />
+        <result column="SEND_TIME" property="sendTime" />
+        <result column="READ_TIME" property="readTime" />
+        <result column="CONTENT" property="content" />
+        <result column="ORIGIN_NAME" property="originName" />
+        <result column="CHANGE_NAME" property="changeName" />
+        <result column="READ_CHECK" property="readCheck" />
+    </resultMap>
+
+    <select id="getChatHistory" parameterType="_int" resultMap="messageResultMap">
+        SELECT *
+        FROM MESSAGE
+        WHERE MESSAGEROOM_NO = #{messageRoomNo}
+    </select>
+
+    <select id="getMessageRoomNo" parameterType="map" resultType="_int">
+	    SELECT MESSAGEROOM_NO
+	    FROM MESSAGE_ROOM
+	    WHERE (SEND_ID = #{sendId} AND RECEIVE_ID = #{receiveId})
+	    OR (SEND_ID = #{receiveId} AND RECEIVE_ID = #{sendId})
+	</select>
+    
+    <insert id="createChatRoom" parameterType="map">
+	    INSERT INTO MESSAGE_ROOM (MESSAGEROOM_NO, SEND_ID, RECEIVE_ID)
+	    VALUES (SEQ_RNO.NEXTVAL, #{sendId}, #{receiveId})
+	</insert>
+
+	<insert id="saveMessage" parameterType="Message">
+        INSERT INTO MESSAGE(MESSAGE_NO,
+                            MESSAGEROOM_NO,
+                            SEND_ID,
+                            RECEIVE_ID,
+                            SEND_TIME,
+                            CONTENT)
+        VALUES (SEQ_MNO.NEXTVAL,
+                #{messageRoomNo},
+                #{sendId},
+                #{receiveId},
+                #{sendTime},
+                #{content})
+    </insert>
+    
+    <insert id="saveFile" parameterType="Message">
+        INSERT INTO MESSAGE(MESSAGE_NO,
+                            MESSAGEROOM_NO,
+                            SEND_ID,
+                            RECEIVE_ID,
+                            ORIGIN_NAME,
+                            CHANGE_NAME)
+        VALUES (SEQ_MNO.NEXTVAL,
+                #{messageRoomNo},
+                #{sendId},
+                #{receiveId},
+                #{originName},
+        		#{changeName})
+    </insert>
+    
+    <update id="markAsRead" parameterType="map">
+	    UPDATE MESSAGE
+	    SET READ_CHECK = 0
+	    WHERE MESSAGEROOM_NO = #{messageRoomNo}
+	    AND RECEIVE_ID = #{receiveId}
+	    AND READ_CHECK = 1
+	</update>
+	
+	<update id="markAsUnread" parameterType="map">
+        UPDATE MESSAGE
+        SET READ_CHECK = 1
+        WHERE MESSAGEROOM_NO = #{messageRoomNo}
+        AND (SEND_ID = #{sendId} AND RECEIVE_ID = #{receiveId})
+	    OR (SEND_ID = #{receiveId} AND RECEIVE_ID = #{sendId})
+        AND READ_CHECK = 0
+    </update>
+    
+    <select id="getChatRoomNumbers" parameterType="String" resultType="Integer">
+	    SELECT MESSAGEROOM_NO
+	    FROM MESSAGE_ROOM
+	    WHERE SEND_ID = #{userId} OR RECEIVE_ID = #{userId}
+	</select>
+	
+	<select id="getNotificationsForUser" parameterType="String" resultType="String">
+        SELECT CONTENT
+        FROM MESSAGE
+        WHERE RECEIVE_ID = #{userId}
+        AND READ_CHECK = 1
+    </select>
+    
+     <select id="getUnreadMessageCount" resultType="int" parameterType="String">
+     	SELECT COUNT(*)
+     	FROM MESSAGE
+     	WHERE RECEIVE_ID = #{userId}
+     	AND READ_CHECK = 1
+     </select>
+</mapper>

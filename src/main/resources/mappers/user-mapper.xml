@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="userMapper">
+	<resultMap type="User" id="userResultSet">
+		<result column="USER_ID" property="userId" />
+		<result column="USER_PWD" property="userPwd" />
+		<result column="EMAIL" property="email" />
+		<result column="JOINDATE" property="joinDate" />
+		<result column="PROFILE_PATH" property="profilePath" />
+		<result column="PROFILE_ORIGINNAME" property="profileOriginName"/>
+		<result column="PROFILE_CHANGENAME" property="profileChangeName"/>
+		<result column="STATUS" property="status" />
+		<result column="SHOP_BRANDCHEK" property="shopBrandChek" />
+		<result column="USER_MEMO" property="userMemo" />
+	</resultMap>
+	<select id="loginUser" resultMap="userResultSet">
+		SELECT *
+		FROM USERS
+		WHERE USER_ID = #{userId}
+		AND
+		STATUS = 'Y'
+	</select>
+	
+	<!-- <select id="loginUser" resultMap="userResultSet">
+		SELECT USER_ID,
+		USER_PWD,
+		EMAIL,
+		JOINDATE,
+		PROFILE_PATH,
+		STATUS,
+		SHOP_BRANDCHEK,
+		USER_MEMO
+		FROM USERS
+		WHERE USER_ID = #{userId}
+		AND
+		STATUS = 'Y'
+	</select> -->
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO USERS(USER_ID,
+						USER_PWD,
+						EMAIL,
+						SHOP_BRANDCHEK)
+		VALUES(#{userId},
+		#{userPwd},
+		#{email},
+		#{shopBrandChek})
+	</insert>
+	<select id="checkId" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM USERS
+		WHERE USER_ID = #{checkId}
+	</select>
+	<select id="emailCheck" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM USERS
+		WHERE email = #{email}
+	</select>
+	<!-- 메시지용 - 중구 -->
+	<select id="getAllUsers" resultMap="userResultSet">
+		SELECT * FROM USERS
+	</select>
+	
+	<select id="searchUser" parameterType="string" resultMap="userResultSet">
+		SELECT USER_ID,USER_MEMO,PROFILE_PATH,PROFILE_CHANGENAME, PROFILE_ORIGINNAME FROM USERS WHERE USER_ID LIKE '%'||#{searchStr}||'%'
+	</select>
+	
+	<update id="updateUser" parameterType="User">
+		UPDATE USERS
+		SET EMAIL =#{email}
+		,USER_MEMO =#{userMemo}
+		WHERE USER_ID=#{userId}
+		AND STATUS='Y'
+	</update>
+	
+	<update id="updatePwd" parameterType="User">
+		UPDATE USERS
+		SET USER_PWD=#{userPwd}
+		WHERE USER_ID=#{userId}
+		AND STATUS='Y'
+	</update>
+	
+	<select id="selectUser" parameterType="string" resultMap="userResultSet">
+		SELECT USER_ID,EMAIL,USER_MEMO,PROFILE_PATH,PROFILE_CHANGENAME, PROFILE_ORIGINNAME FROM USERS WHERE USER_ID=#{userId}
+	</select>
+	
+	<insert id="insertFollow" parameterType="FollowList">
+		INSERT INTO FOLLOWLIST(FROM_USER,TO_USER)
+		VALUES(#{fromUser},#{toUser})
+	</insert>
+	
+	<select id="selectFollow" parameterType="FollowList" resultType="_int">
+		SELECT COUNT(*) FROM FOLLOWLIST WHERE TO_USER=#{toUser} AND FROM_USER=#{fromUser}
+	</select>
+	
+	<delete id="deleteFollow" parameterType="FollowList">
+		DELETE FROM FOLLOWLIST WHERE TO_USER=#{toUser} AND FROM_USER=#{fromUser}
+	</delete>
+	
+	<select id="findId" parameterType="string" resultType="string">
+		SELECT USER_ID
+		FROM USERS
+		WHERE EMAIL = #{idForFindEmail}
+	</select>
+	
+	<update id="updateChangePwd" parameterType="User">
+		UPDATE USERS
+		SET USER_PWD=#{userPwd}
+		WHERE USER_ID=#{userId}
+		AND STATUS='Y'
+	</update>
+	
+	<select id="accEmail" parameterType="User" resultType="_int">
+		SELECT COUNT(*)
+		FROM USERS
+		WHERE email = #{email}
+		AND USER_ID = #{userId}
+	</select>
+	
+	<insert id="insertSearchHistory" parameterType="SearchHistory">
+		INSERT INTO SEARCH_HISTORY(FROM_USER,SEARCH_USER)VALUES(#{fromUser},#{searchUser})
+	</insert>
+	
+	<select id="selectSearchHistory" parameterType="string" resultMap="userResultSet">
+		SELECT USER_ID,PROFILE_PATH,PROFILE_ORIGINNAME,PROFILE_CHANGENAME,USER_MEMO
+		FROM USERS
+		WHERE USER_ID IN (SELECT SEARCH_USER
+		                  FROM SEARCH_HISTORY
+		                  WHERE FROM_USER=#{userId})
+		AND STATUS='Y'
+	</select>
+	
+	<delete id="deleteSearchHistory" parameterType="SearchHistory">
+		DELETE FROM SEARCH_HISTORY WHERE FROM_USER=#{fromUser} AND SEARCH_USER=#{searchUser}
+	</delete>
+</mapper>

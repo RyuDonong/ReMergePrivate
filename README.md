@@ -49,6 +49,8 @@ FullCalendar JavaScript 라이브러리를 사용하여 캘린더를 구현하�
 
 저장된 일정클릭시 내가 작성한 일정의 경우 수정, 삭제가 가능하고 위치를 입력했다면 Kakao Map Api로써 지도를 보여줍니다.
 
+<a href="https://github.com/RyuDonong/ReMergePrivate/blob/7a62aa98614a43e404b4052e1d27b270ffb070db/src/main/webapp/WEB-INF/views/calendar/main.jsp#L128">공유 캘린더 코드 보러가기</a>
+
 ***
 
 <img width="1710" alt="스크린샷 2024-07-13 오후 3 15 42" src="https://github.com/user-attachments/assets/95fb2db9-4c2b-4c2f-8681-d4d2c1a24146">
@@ -66,9 +68,38 @@ FullCalendar JavaScript 라이브러리를 사용하여 캘린더를 구현하�
 <img width="1706" alt="스크린샷 2024-07-13 오후 3 20 18" src="https://github.com/user-attachments/assets/013c1c40-941b-40e2-aaf0-b26420955c86">
 <img width="1708" alt="스크린샷 2024-07-13 오후 3 20 31" src="https://github.com/user-attachments/assets/c4d40b11-0a3a-4dc2-8b42-04c49ec630fd">
 
+<a href="https://github.com/RyuDonong/ReMergePrivate/blob/7a62aa98614a43e404b4052e1d27b270ffb070db/src/main/webapp/WEB-INF/views/feed/mainFeed.jsp#L429">스토리 조회 JS코드 보기</a>
+<a href="https://github.com/RyuDonong/ReMergePrivate/blob/7a62aa98614a43e404b4052e1d27b270ffb070db/src/main/java/com/kh/reMerge/feed/controller/StoryController.java#L23">스토리 Controller Link</a>
 
 #### 메인화면 상단 스토리 게시글
 해당 게시글은 팔로우된 사용자중 24시간 내에 작성한 게시글만 조회(사용자별 하나씩으로 보여주고 해당 사용자 클릭시 next버튼으로 보여주기)
 
+***
+
+### 검색
+<img width="544" alt="스크린샷 2024-07-15 오후 4 46 14" src="https://github.com/user-attachments/assets/3b65656d-ed6d-4a71-aac2-47d3c731bef2">
+<img width="546" alt="스크린샷 2024-07-15 오후 4 46 27" src="https://github.com/user-attachments/assets/0760e7d6-bcc0-40aa-b47f-d8583e7a5e1c">
+
+#### 검색창에 글자 입력시 마다 Ajax 조회 
+
+#입력시에 태그검색으로 변경되고, #없이 입력하면 사용자 검색 
+
+검색된 사용자, 태그 클릭시 각각 사용자 프로필 페이지, 태그된 게시글들 페이지 이동 
+
+<a href="https://github.com/RyuDonong/ReMergePrivate/blob/7a62aa98614a43e404b4052e1d27b270ffb070db/src/main/webapp/WEB-INF/views/user/loginHeader.jsp#L133">검색 JS코드 보기</a>
+
+***
+
+### 축제
+<img width="1708" alt="스크린샷 2024-07-13 오후 3 16 54" src="https://github.com/user-attachments/assets/cc093d07-86cc-49e9-9e01-e1af383d14ee">
+
+#### 공공데이터 축제 조회해서 보여주기
+
+문화체육관광부에서 제공하는 축제 정보 OpenApi를 사용하여 축제 정보 제공하고 Ajax 추천, 비추천 기능, 추천수, 해당 축제 클릭시 네이버로 축제이름 검색, 
+
+공유하기 클릭시 해당 축제 네이버 검색 링크 복사 
+
+<a href="https://github.com/RyuDonong/ReMergePrivate/blob/7a62aa98614a43e404b4052e1d27b270ffb070db/src/main/webapp/WEB-INF/views/festival/festival.jsp#L43">공공데이터 조회 JS코드 보기</a>
+<a href="https://github.com/RyuDonong/ReMergePrivate/blob/7a62aa98614a43e404b4052e1d27b270ffb070db/src/main/java/com/kh/reMerge/festival/controller/FestivalController.java#L37">공공데이터 조회 Controller코드 보기</a>
 
 

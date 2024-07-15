@@ -1,5 +1,6 @@
 # ReMergePrivate
 ReMerge 는 기록을 뜻하는 Record와 결합하다라는 뜻을 가진 Merge를 합쳐 기록을 합친다라는 뜻을 가진 SNS 페이지 입니다.
+
 <img width="600" alt="스크린샷 2024-07-06 오후 4 19 46" src="https://github.com/user-attachments/assets/66ae1e22-bc5c-4839-ab4e-41cdb29210b0">
 
 # Intro
